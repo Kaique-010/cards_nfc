@@ -1,0 +1,901 @@
+{% extends 'nfc_cards/base.html' %}
+
+{% block title %}{{ person.nome }} - {{ empresa.nome }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --neon-cyan: #00ffff;
+        --neon-purple: #8a2be2;
+        --neon-green: #39ff14;
+        --tech-gold: #ffd700;
+        --dark-bg: rgba(15, 23, 42, 0.95);
+        --glass-bg: rgba(30, 41, 59, 0.3);
+        --border-glow: rgba(0, 255, 255, 0.3);
+    }
+
+    .container {
+        padding: 20px;
+        max-width: 1200px;
+    }
+
+    /* Header Actions - Futurista */
+    .header-actions {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glow);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 
+            0 10px 30px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* Botões Tecnológicos */
+    .btn-tech {
+        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+        border: none;
+        border-radius: 25px;
+        padding: 12px 25px;
+        font-weight: 600;
+        color: white;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        margin: 5px;
+    }
+
+    .btn-tech::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(255, 255, 255, 0.2), 
+            transparent);
+        transition: left 0.6s ease;
+    }
+
+    .btn-tech:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 255, 255, 0.4);
+        color: white;
+    }
+
+    .btn-tech:hover::before {
+        left: 100%;
+    }
+
+    .btn-tech.btn-success {
+        background: linear-gradient(135deg, var(--neon-green), #20c997);
+        box-shadow: 0 5px 15px rgba(57, 255, 20, 0.3);
+    }
+
+    .btn-tech.btn-success:hover {
+        box-shadow: 0 10px 25px rgba(57, 255, 20, 0.4);
+    }
+
+    .btn-tech.btn-warning {
+        background: linear-gradient(135deg, var(--tech-gold), #fd7e14);
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .btn-tech.btn-warning:hover {
+        box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+    }
+
+    .btn-tech.btn-secondary {
+        background: linear-gradient(135deg, #6c757d, #495057);
+        box-shadow: 0 5px 15px rgba(108, 117, 125, 0.3);
+    }
+
+    /* Card Principal - Glassmorphism */
+    .person-detail-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glow);
+        border-radius: 25px;
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .person-detail-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-green));
+        animation: borderGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes borderGlow {
+        0% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    .person-detail-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 
+            0 25px 50px rgba(0, 255, 255, 0.2),
+            0 0 40px rgba(0, 255, 255, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    /* Foto da Pessoa */
+    .person-photo {
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid var(--neon-cyan);
+        box-shadow: 
+            0 0 30px rgba(0, 255, 255, 0.4),
+            inset 0 2px 4px rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .person-photo:hover {
+        transform: scale(1.05);
+        box-shadow: 
+            0 0 40px rgba(0, 255, 255, 0.6),
+            inset 0 2px 4px rgba(255, 255, 255, 0.2);
+    }
+
+    .person-placeholder {
+        width: 180px;
+        height: 180px;
+        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin: 0 auto;
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+        animation: photoGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes photoGlow {
+        0% { box-shadow: 0 0 30px rgba(0, 255, 255, 0.4); }
+        100% { box-shadow: 0 0 40px rgba(138, 43, 226, 0.6); }
+    }
+
+    /* Títulos das Seções */
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #e2e8f0;
+        text-shadow: 0 0 15px var(--neon-cyan);
+        margin-bottom: 25px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+        border-radius: 2px;
+    }
+
+    .section-title i {
+        color: var(--neon-cyan);
+        filter: drop-shadow(0 0 10px var(--neon-cyan));
+    }
+
+    /* Nome da Pessoa */
+    .person-name {
+        font-size: 2.2rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 30px var(--neon-cyan);
+        margin-bottom: 15px;
+    }
+
+    /* Items de Contato */
+    .contact-item {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        height: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .contact-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, var(--neon-green), var(--neon-cyan));
+        transform: scaleY(0);
+        transition: transform 0.3s ease;
+    }
+
+    .contact-item:hover {
+        transform: translateY(-5px);
+        border-color: var(--neon-green);
+        box-shadow: 0 10px 30px rgba(57, 255, 20, 0.2);
+    }
+
+    .contact-item:hover::before {
+        transform: scaleY(1);
+    }
+
+    .contact-item i {
+        filter: drop-shadow(0 0 8px currentColor);
+    }
+
+    .contact-item strong {
+        color: #e2e8f0;
+        font-weight: 600;
+    }
+
+    .contact-item a {
+        color: var(--neon-cyan);
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .contact-item a:hover {
+        color: var(--neon-green);
+        text-shadow: 0 0 10px var(--neon-green);
+    }
+
+    /* Apresentação Box */
+    .apresentacao-box {
+        background: rgba(30, 41, 59, 0.4);
+        backdrop-filter: blur(15px);
+        border: 1px solid var(--border-glow);
+        border-radius: 20px;
+        padding: 25px;
+        border-left: 4px solid var(--neon-purple);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .apresentacao-box p {
+        color: #cbd5e1;
+        line-height: 1.6;
+        margin-bottom: 0;
+    }
+
+    /* Redes Sociais */
+    .social-links {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .social-links a {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .social-links a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 50%;
+        background: inherit;
+        opacity: 0.8;
+        transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+        transform: translateY(-3px) scale(1.1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .social-links a:hover::before {
+        opacity: 1;
+        box-shadow: 0 0 20px currentColor;
+    }
+
+    .social-links .linkedin { background: #0077b5; }
+    .social-links .instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .social-links .facebook { background: #1877f2; }
+    .social-links .website { background: var(--neon-cyan); }
+    .social-links .linktree { background: #39e09b; }
+
+    /* Cards de Pets e NFC */
+    .pet-mini-card, .nfc-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .pet-mini-card::before, .nfc-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .pet-mini-card:hover, .nfc-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--neon-cyan);
+        box-shadow: 0 15px 40px rgba(0, 255, 255, 0.2);
+    }
+
+    .pet-mini-card:hover::before, .nfc-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .pet-mini-photo, .recent-avatar {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 2px solid var(--neon-cyan);
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+    }
+
+    .pet-mini-placeholder {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        box-shadow: 0 0 15px rgba(57, 255, 20, 0.3);
+    }
+
+    /* NFC Card Específico */
+    .nfc-card-item {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glow);
+        border-radius: 20px;
+        padding: 25px;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nfc-card-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--tech-gold), var(--neon-cyan));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .nfc-card-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+    }
+
+    .nfc-card-item:hover::before {
+        transform: scaleX(1);
+    }
+
+    .nfc-card-item i {
+        color: var(--tech-gold);
+        filter: drop-shadow(0 0 15px var(--tech-gold));
+        margin-bottom: 15px;
+    }
+
+    .nfc-card-item h6 {
+        color: #e2e8f0;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .nfc-card-item small {
+        color: #94a3b8;
+    }
+
+    /* Modal Styles */
+    .modal-content {
+        background: var(--dark-bg);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border-glow);
+        border-radius: 20px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-glow);
+        background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+        border-radius: 20px 20px 0 0;
+    }
+
+    .modal-title {
+        color: white;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-body {
+        color: #e2e8f0;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--border-glow);
+    }
+
+    /* QR Code Display */
+    .qr-code-display {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .qr-code-display img {
+        max-width: 200px;
+        border-radius: 15px;
+        border: 3px solid var(--neon-cyan);
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .person-photo, .person-placeholder {
+            width: 150px;
+            height: 150px;
+        }
+        
+        .person-name {
+            font-size: 1.8rem;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+        }
+        
+        .social-links {
+            justify-content: center;
+        }
+        
+        .btn-tech {
+            padding: 10px 20px;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container {
+            padding: 15px;
+        }
+        
+        .header-actions {
+            padding: 15px;
+        }
+        
+        .contact-item {
+            padding: 15px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Header com ações -->
+            <div class="header-actions">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <a href="{% url 'person_list' empresa_slug=empresa.slug %}" class="btn-tech btn-secondary">
+                        <i class="fas fa-arrow-left"></i>Voltar para Lista
+                    </a>
+                    
+                    {% if user.is_authenticated %}
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="#" class="btn-tech btn-warning" onclick="editPerson()">
+                            <i class="fas fa-edit"></i>Editar Pessoa
+                        </a>
+                        <button class="btn-tech btn-success" onclick="showQRCode('{{ person.slug }}')">
+                            <i class="fas fa-qrcode"></i>Ver QR Code
+                        </button>
+                        <button class="btn-tech" onclick="createNFCCard('{{ person.slug }}')">
+                            <i class="fas fa-plus"></i>Novo Cartão NFC
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Card principal da pessoa -->
+            <div class="person-detail-card">
+                <div class="card-body p-4">
+                    <div class="row">
+                        <!-- Foto e informações básicas -->
+                        <div class="col-lg-4 text-center mb-4">
+                            {% if person.foto %}
+                                <img src="{{ person.foto.url }}" alt="{{ person.nome }}" class="person-photo mb-3">
+                            {% else %}
+                                <div class="person-placeholder mb-3">
+                                    <i class="fas fa-user fa-4x"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <h2 class="person-name">{{ person.nome }}</h2>
+                            
+                            {% if person.cargo %}
+                            <p class="text-muted mb-3" style="color: #94a3b8 !important;">
+                                <i class="fas fa-briefcase me-2" style="color: var(--neon-green);"></i>{{ person.cargo }}
+                            </p>
+                            {% endif %}
+                            
+                            <p class="text-muted mb-1" style="color: #94a3b8 !important;">
+                                <i class="fas fa-building me-2" style="color: var(--neon-cyan);"></i>{{ empresa.nome }}
+                            </p>
+                        </div>
+
+                        <!-- Informações de contato -->
+                        <div class="col-lg-8">
+                            <h4 class="section-title">
+                                <i class="fas fa-address-card me-2"></i>Informações de Contato
+                            </h4>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="contact-item">
+                                        <i class="fas fa-envelope text-primary me-2"></i>
+                                        <strong>E-mail:</strong><br>
+                                        <a href="mailto:{{ person.email }}">{{ person.email }}</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <div class="contact-item">
+                                        <i class="fas fa-phone text-success me-2"></i>
+                                        <strong>Telefone:</strong><br>
+                                        <a href="tel:{{ person.telefone }}">{{ person.telefone }}</a>
+                                    </div>
+                                </div>
+                                
+                                {% if person.whatsapp %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="contact-item">
+                                        <i class="fab fa-whatsapp text-success me-2"></i>
+                                        <strong>WhatsApp:</strong><br>
+                                        <a href="https://wa.me/{{ person.whatsapp|cut:'+' }}" target="_blank">{{ person.whatsapp }}</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apresentação -->
+                    {% if person.apresentacao %}
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <h4 class="section-title">
+                                <i class="fas fa-user-circle me-2"></i>Apresentação
+                            </h4>
+                            <div class="apresentacao-box">
+                                <p>{{ person.apresentacao|linebreaks }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Redes sociais -->
+                    {% if person.linkedin or person.instagram or person.facebook or person.website or person.linktree_url %}
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <h4 class="section-title">
+                                <i class="fas fa-share-alt me-2"></i>Redes Sociais
+                            </h4>
+                            <div class="social-links">
+                                {% if person.linkedin %}
+                                <a href="{{ person.linkedin }}" target="_blank" class="linkedin" title="LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if person.instagram %}
+                                <a href="{{ person.instagram }}" target="_blank" class="instagram" title="Instagram">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if person.facebook %}
+                                <a href="{{ person.facebook }}" target="_blank" class="facebook" title="Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if person.website %}
+                                <a href="{{ person.website }}" target="_blank" class="website" title="Website">
+                                    <i class="fas fa-globe"></i>
+                                </a>
+                                {% endif %}
+                                
+                                {% if person.linktree_url %}
+                                <a href="{{ person.linktree_url }}" target="_blank" class="linktree" title="Linktree">
+                                    <i class="fas fa-link"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Pets associados -->
+                    {% if person.pets.all %}
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <h4 class="section-title">
+                                <i class="fas fa-paw me-2"></i>Pets
+                            </h4>
+                            <div class="row">
+                                {% for pet in person.pets.all %}
+                                <div class="col-lg-6 mb-3">
+                                    <div class="pet-mini-card">
+                                        <div class="card-body p-3">
+                                            <div class="d-flex align-items-center">
+                                                {% if pet.foto %}
+                                                    <img src="{{ pet.foto.url }}" alt="{{ pet.nome }}" class="pet-mini-photo me-3">
+                                                {% else %}
+                                                    <div class="pet-mini-placeholder me-3">
+                                                        <i class="fas fa-paw"></i>
+                                                    </div>
+                                                {% endif %}
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-1" style="color: #e2e8f0;">{{ pet.nome }}</h6>
+                                                    <small style="color: #94a3b8;">{{ pet.get_especie_display }}</small>
+                                                </div>
+                                                <a href="{% url 'pet_detail' empresa_slug=empresa.slug pet_slug=pet.slug %}" class="btn btn-sm btn-outline-light">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Cartões NFC -->
+                    <div class="row mt-5">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h4 class="section-title mb-0">
+                                    <i class="fas fa-credit-card me-2"></i>Cartões NFC
+                                </h4>
+                                {% if user.is_authenticated %}
+                                <button class="btn-tech btn-sm" onclick="createNFCCard('{{ person.slug }}')">
+                                    <i class="fas fa-plus"></i>Novo Cartão
+                                </button>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="row">
+                                {% for cartao in person.cartoes_nfc.all %}
+                                <div class="col-lg-4 col-md-6 mb-3">
+                                    <div class="nfc-card-item">
+                                        <i class="fas fa-credit-card fa-3x"></i>
+                                        <h6>Cartão #{{ cartao.codigo_nfc }}</h6>
+                                        <small>Criado em {{ cartao.criado_em|date:"d/m/Y" }}</small>
+                                        {% if user.is_authenticated %}
+                                        <div class="mt-3">
+                                            <button class="btn btn-sm btn-outline-light me-2" onclick="showQRCode('{{ cartao.codigo_nfc }}')">
+                                                <i class="fas fa-qrcode"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-light" onclick="editNFCCard('{{ cartao.id }}')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="col-12">
+                                    <div class="text-center py-4" style="color: #94a3b8;">
+                                        <i class="fas fa-credit-card fa-3x mb-3" style="opacity: 0.3;"></i>
+                                        <p>Nenhum cartão NFC cadastrado ainda.</p>
+                                        {% if user.is_authenticated %}
+                                        <button class="btn-tech" onclick="createNFCCard('{{ person.slug }}')">
+                                            <i class="fas fa-plus"></i>Criar Primeiro Cartão
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para QR Code -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-qrcode me-2"></i>QR Code
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="qr-code-display" id="qrCodeContent">
+                    <!-- QR Code será inserido aqui -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-tech btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn-tech" onclick="downloadQRCode()">
+                    <i class="fas fa-download"></i>Download
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Criar/Editar Cartão NFC -->
+<div class="modal fade" id="nfcCardModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-credit-card me-2"></i>Cartão NFC
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="nfcCardForm">
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #e2e8f0;">Código do Cartão</label>
+                        <input type="text" class="form-control" id="nfcCode" placeholder="Digite o código do cartão NFC">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" style="color: #e2e8f0;">Tipo</label>
+                        <select class="form-control" id="nfcType">
+                            <option value="pessoa">Cartão de Visita</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-tech btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn-tech" onclick="saveNFCCard()">
+                    <i class="fas fa-save"></i>Salvar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Função para mostrar QR Code
+function showQRCode(code) {
+    const modal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
+    const content = document.getElementById('qrCodeContent');
+    
+    // Gerar URL do QR Code
+    const url = `${window.location.origin}/{{ empresa.slug }}/nfc/${code}/`;
+    
+    content.innerHTML = `
+        <div class="text-center">
+            <div class="mb-3">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}" 
+                     alt="QR Code" class="img-fluid">
+            </div>
+            <p style="color: #94a3b8; font-size: 0.9rem;">
+                <strong>URL:</strong><br>
+                <code style="background: rgba(0,0,0,0.3); padding: 5px; border-radius: 5px;">${url}</code>
+            </p>
+        </div>
+    `;
+    
+    modal.show();
+}
+
+// Função para criar novo cartão NFC
+function createNFCCard(personSlug) {
+    const modal = new bootstrap.Modal(document.getElementById('nfcCardModal'));
+    document.getElementById('nfcCode').value = '';
+    document.querySelector('#nfcCardModal .modal-title').innerHTML = '<i class="fas fa-plus me-2"></i>Novo Cartão NFC';
+    modal.show();
+}
+
+// Função para editar cartão NFC
+function editNFCCard(cardId) {
+    const modal = new bootstrap.Modal(document.getElementById('nfcCardModal'));
+    document.querySelector('#nfcCardModal .modal-title').innerHTML = '<i class="fas fa-edit me-2"></i>Editar Cartão NFC';
+    // Aqui você carregaria os dados do cartão via AJAX
+    modal.show();
+}
+
+// Função para salvar cartão NFC
+function saveNFCCard() {
+    const code = document.getElementById('nfcCode').value;
+    const type = document.getElementById('nfcType').value;
+    
+    if (!code) {
+        alert('Por favor, digite o código do cartão NFC');
+        return;
+    }
+    
+    // Aqui você faria a requisição AJAX para salvar
+    console.log('Salvando cartão NFC:', { code, type });
+    
+    // Fechar modal e recarregar página
+    bootstrap.Modal.getInstance(document.getElementById('nfcCardModal')).hide();
+    location.reload();
+}
+
+// Função para editar pessoa
+function editPerson() {
+    // Redirecionar para página de edição (você precisa criar esta URL)
+    window.location.href = `{% url 'person_list' empresa_slug=empresa.slug %}`;
+}
+
+// Função para download do QR Code
+function downloadQRCode() {
+    const img = document.querySelector('#qrCodeContent img');
+    if (img) {
+        const link = document.createElement('a');
+        link.download = 'qrcode-{{ person.nome|slugify }}.png';
+        link.href = img.src;
+        link.click();
+    }
+}
+</script>
+{% endblock %}

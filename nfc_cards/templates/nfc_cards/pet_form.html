@@ -1,0 +1,195 @@
+{% extends 'nfc_cards/base.html' %}
+
+{% block title %}Cadastrar Pet - NFC Cards{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-paw text-primary me-2"></i>
+                        Cadastrar Novo Pet
+                    </h2>
+                    {% if empresa %}
+                        <p class="mb-0 text-muted">{{ empresa.nome }}</p>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Informações Básicas do Pet -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>Informações do Pet
+                                </h5>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nome.id_for_label }}" class="form-label">Nome do Pet *</label>
+                                {{ form.nome }}
+                                {% if form.nome.errors %}
+                                    <div class="text-danger small">{{ form.nome.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.especie.id_for_label }}" class="form-label">Espécie *</label>
+                                {{ form.especie }}
+                                {% if form.especie.errors %}
+                                    <div class="text-danger small">{{ form.especie.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.raca.id_for_label }}" class="form-label">Raça</label>
+                                {{ form.raca }}
+                                {% if form.raca.errors %}
+                                    <div class="text-danger small">{{ form.raca.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.porte.id_for_label }}" class="form-label">Porte</label>
+                                {{ form.porte }}
+                                {% if form.porte.errors %}
+                                    <div class="text-danger small">{{ form.porte.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.cor.id_for_label }}" class="form-label">Cor</label>
+                                {{ form.cor }}
+                                {% if form.cor.errors %}
+                                    <div class="text-danger small">{{ form.cor.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.data_nascimento.id_for_label }}" class="form-label">Data de Nascimento</label>
+                                {{ form.data_nascimento }}
+                                {% if form.data_nascimento.errors %}
+                                    <div class="text-danger small">{{ form.data_nascimento.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.foto.id_for_label }}" class="form-label">Foto do Pet</label>
+                                {{ form.foto }}
+                                {% if form.foto.errors %}
+                                    <div class="text-danger small">{{ form.foto.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Informações do Tutor -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-user me-2"></i>Tutor
+                                </h5>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.tutor.id_for_label }}" class="form-label">Tutor *</label>
+                                {{ form.tutor }}
+                                <div class="form-text">Selecione a pessoa responsável pelo pet.</div>
+                                {% if form.tutor.errors %}
+                                    <div class="text-danger small">{{ form.tutor.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Informações Veterinárias -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-stethoscope me-2"></i>Informações Veterinárias
+                                </h5>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.veterinario.id_for_label }}" class="form-label">Nome do Veterinário</label>
+                                {{ form.veterinario }}
+                                {% if form.veterinario.errors %}
+                                    <div class="text-danger small">{{ form.veterinario.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.telefone_veterinario.id_for_label }}" class="form-label">Telefone do Veterinário</label>
+                                {{ form.telefone_veterinario }}
+                                {% if form.telefone_veterinario.errors %}
+                                    <div class="text-danger small">{{ form.telefone_veterinario.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.medicamentos.id_for_label }}" class="form-label">Medicamentos</label>
+                                {{ form.medicamentos }}
+                                <div class="form-text">Liste os medicamentos que o pet toma regularmente.</div>
+                                {% if form.medicamentos.errors %}
+                                    <div class="text-danger small">{{ form.medicamentos.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.alergias.id_for_label }}" class="form-label">Alergias</label>
+                                {{ form.alergias }}
+                                <div class="form-text">Descreva alergias conhecidas do pet.</div>
+                                {% if form.alergias.errors %}
+                                    <div class="text-danger small">{{ form.alergias.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.observacoes.id_for_label }}" class="form-label">Observações</label>
+                                {{ form.observacoes }}
+                                <div class="form-text">Informações adicionais importantes sobre o pet.</div>
+                                {% if form.observacoes.errors %}
+                                    <div class="text-danger small">{{ form.observacoes.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'pet_list' empresa_slug=empresa.slug %}" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Salvar Pet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    padding: 12px 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
+
+textarea.form-control {
+    min-height: 100px;
+}
+
+input[type="date"] {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+</style>
+
+<script>
+// Adicionar classes do Bootstrap aos campos do formulário
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        if (input.type !== 'file') {
+            input.classList.add('form-control');
+        } else {
+            input.classList.add('form-control');
+        }
+    });
+});
+</script>
+{% endblock %}

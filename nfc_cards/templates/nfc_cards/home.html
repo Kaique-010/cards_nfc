@@ -1,0 +1,181 @@
+{% extends 'nfc_cards/base.html' %}
+
+{% block title %}NFC Cards System{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">
+            <i class="fas fa-credit-card me-3"></i>
+            NFC Cards System
+        </h1>
+        <p class="hero-subtitle">
+            Sistema completo para gerenciamento de cartões NFC para pessoas e pets
+        </p>
+        
+        {% if not user.is_authenticated %}
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-8 text-center">
+                <div class="card auth-card">
+                    <div class="card-body py-4">
+                        <h3 class="mb-4">
+                            <i class="fas fa-user-shield me-2"></i>
+                            Acesso ao Sistema
+                        </h3>
+                        <p class="text-muted mb-4">
+                            Para acessar o sistema, você precisa estar logado. Se você é responsável por uma empresa, 
+                            faça login ou registre-se para criar sua empresa.
+                        </p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-md-2">
+                                <i class="fas fa-sign-in-alt me-2"></i>Fazer Login
+                            </a>
+                            <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>Registrar-se
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if empresas and empresas.count > 1 %}
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-4 mb-4">
+                <div class="card stats-card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-building fa-3x mb-3"></i>
+                        <h3>{{ empresas.count }}</h3>
+                        <p class="mb-0">Empresas Ativas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card stats-card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-3x mb-3"></i>
+                        <h3>{{ total_pessoas }}</h3>
+                        <p class="mb-0">Pessoas Cadastradas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card stats-card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-paw fa-3x mb-3"></i>
+                        <h3>{{ total_pets }}</h3>
+                        <p class="mb-0">Pets Cadastrados</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container py-5">
+    {% if empresas %}
+        <div class="row">
+            <div class="col-12 mb-5">
+                <h2 class="text-center mb-4">
+                    <i class="fas fa-building me-2"></i>
+                    {% if empresas.count == 1 %}
+                        Empresas Disponíveis
+                    {% else %}
+                        Selecione uma Empresa
+                    {% endif %}
+                </h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for empresa in empresas %}
+            <div class="col-lg-6 col-xl-4 mb-4">
+                <div class="card h-100 empresa-card">
+                    <div class="card-body text-center">
+                        {% if empresa.logo %}
+                            <img src="{{ empresa.logo.url }}" alt="{{ empresa.nome }}" class="empresa-logo mb-3">
+                        {% else %}
+                            <div class="empresa-placeholder mb-3">
+                                {{ empresa.nome|first|upper }}
+                            </div>
+                        {% endif %}
+                        
+                        <h4 class="card-title">{{ empresa.nome }}</h4>
+                        
+                        {% if empresa.descricao %}
+                            <p class="card-text text-muted">{{ empresa.descricao|truncatewords:15 }}</p>
+                        {% endif %}
+                        
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <small class="text-muted">Pessoas</small>
+                                <div class="fw-bold">{{ empresa.pessoas.count }}</div>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">Pets</small>
+                                <div class="fw-bold">{{ empresa.pets.count }}</div>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted">Cartões</small>
+                                <div class="fw-bold">{{ empresa.cartoes_nfc.count }}</div>
+                            </div>
+                        </div>
+                        
+                        <a href="{% url 'empresa_home' empresa_slug=empresa.slug %}" 
+                           class="btn btn-primary btn-lg w-100"
+                           style="background-color: {{ empresa.cor_primaria }}; border-color: {{ empresa.cor_primaria }};">
+                            <i class="fas fa-arrow-right me-2"></i>Acessar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title text-center mb-4">
+                        <i class="fas fa-info-circle text-info me-2"></i>
+                        Como Funciona
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-3 text-center mb-4">
+                            <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                            <h5>1. Registre-se</h5>
+                            <p>Crie sua conta no sistema para começar.</p>
+                        </div>
+                        <div class="col-md-3 text-center mb-4">
+                            <i class="fas fa-building fa-3x text-warning mb-3"></i>
+                            <h5>2. Crie sua Empresa</h5>
+                            <p>Cadastre sua empresa com todas as informações.</p>
+                        </div>
+                        <div class="col-md-3 text-center mb-4">
+                            <i class="fas fa-users fa-3x text-info mb-3"></i>
+                            <h5>3. Cadastre Pessoas/Pets</h5>
+                            <p>Adicione pessoas ou pets com informações completas.</p>
+                        </div>
+                        <div class="col-md-3 text-center mb-4">
+                            <i class="fas fa-mobile-alt fa-3x text-success mb-3"></i>
+                            <h5>4. Use o Cartão NFC</h5>
+                            <p>Aproxime o cartão de qualquer smartphone.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.auth-card {
+    border: none;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+}
+</style>
+{% endblock %}

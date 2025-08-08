@@ -1,0 +1,118 @@
+{% extends 'nfc_cards/base.html' %}
+
+{% block title %}Pessoas - {{ empresa.nome }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>
+                    <i class="fas fa-users text-primary me-2"></i>
+                    Pessoas - {{ empresa.nome }}
+                </h2>
+                <a href="{% url 'person_create' empresa_slug=empresa.slug %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Nova Pessoa
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if pessoas %}
+        <div class="row">
+            {% for person in pessoas %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card person-card h-100">
+                    <div class="card-body text-center">
+                        {% if person.foto %}
+                            <img src="{{ person.foto.url }}" alt="{{ person.nome }}" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3 mx-auto" style="width: 100px; height: 100px;">
+                                <i class="fas fa-user fa-2x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <h5 class="card-title">{{ person.nome }}</h5>
+                        
+                        {% if person.cargo %}
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-briefcase me-1"></i>{{ person.cargo }}
+                        </p>
+                        {% endif %}
+                        
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-envelope me-1"></i>{{ person.email }}
+                        </p>
+                        
+                        {% if person.telefone %}
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-phone me-1"></i>{{ person.telefone }}
+                        </p>
+                        {% endif %}
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'person_detail' empresa_slug=empresa.slug person_slug=person.slug %}" class="btn btn-outline-primary">
+                                <i class="fas fa-eye me-2"></i>Ver Perfil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginação -->
+        {% if is_paginated %}
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="Navegação de páginas">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">Primeira</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                            </li>
+                        {% endif %}
+
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                            </span>
+                        </li>
+
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-users fa-4x text-muted mb-4"></i>
+                        <h4>Nenhuma pessoa cadastrada</h4>
+                        <p class="text-muted mb-4">
+                            Ainda não há pessoas cadastradas para {{ empresa.nome }}. 
+                            Clique no botão abaixo para cadastrar a primeira pessoa.
+                        </p>
+                        <a href="{% url 'person_create' empresa_slug=empresa.slug %}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Cadastrar Primeira Pessoa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

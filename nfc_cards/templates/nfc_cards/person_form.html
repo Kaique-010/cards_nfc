@@ -1,0 +1,197 @@
+{% extends 'nfc_cards/base.html' %}
+
+{% block title %}Cadastrar Pessoa - NFC Cards{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2 class="mb-0">
+                        <i class="fas fa-user-plus text-primary me-2"></i>
+                        Cadastrar Nova Pessoa
+                    </h2>
+                    {% if empresa %}
+                        <p class="mb-0 text-muted">{{ empresa.nome }}</p>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Informações Básicas -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-info-circle me-2"></i>Informações Básicas
+                                </h5>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.nome.id_for_label }}" class="form-label">Nome Completo *</label>
+                                {{ form.nome }}
+                                {% if form.nome.errors %}
+                                    <div class="text-danger small">{{ form.nome.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">E-mail *</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger small">{{ form.email.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.telefone.id_for_label }}" class="form-label">Telefone *</label>
+                                {{ form.telefone }}
+                                {% if form.telefone.errors %}
+                                    <div class="text-danger small">{{ form.telefone.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.whatsapp.id_for_label }}" class="form-label">WhatsApp</label>
+                                {{ form.whatsapp }}
+                                {% if form.whatsapp.errors %}
+                                    <div class="text-danger small">{{ form.whatsapp.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.foto.id_for_label }}" class="form-label">Foto de Perfil</label>
+                                {{ form.foto }}
+                                {% if form.foto.errors %}
+                                    <div class="text-danger small">{{ form.foto.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Informações Profissionais -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-briefcase me-2"></i>Informações Profissionais
+                                </h5>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.cargo.id_for_label }}" class="form-label">Cargo</label>
+                                {{ form.cargo }}
+                                {% if form.cargo.errors %}
+                                    <div class="text-danger small">{{ form.cargo.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.apresentacao.id_for_label }}" class="form-label">Apresentação *</label>
+                                {{ form.apresentacao }}
+                                <div class="form-text">Breve apresentação pessoal que aparecerá no seu cartão de visita.</div>
+                                {% if form.apresentacao.errors %}
+                                    <div class="text-danger small">{{ form.apresentacao.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Redes Sociais -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">
+                                    <i class="fas fa-share-alt me-2"></i>Redes Sociais
+                                </h5>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.linkedin.id_for_label }}" class="form-label">
+                                    <i class="fab fa-linkedin text-primary me-1"></i>LinkedIn
+                                </label>
+                                {{ form.linkedin }}
+                                {% if form.linkedin.errors %}
+                                    <div class="text-danger small">{{ form.linkedin.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.instagram.id_for_label }}" class="form-label">
+                                    <i class="fab fa-instagram text-danger me-1"></i>Instagram
+                                </label>
+                                {{ form.instagram }}
+                                {% if form.instagram.errors %}
+                                    <div class="text-danger small">{{ form.instagram.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.facebook.id_for_label }}" class="form-label">
+                                    <i class="fab fa-facebook text-primary me-1"></i>Facebook
+                                </label>
+                                {{ form.facebook }}
+                                {% if form.facebook.errors %}
+                                    <div class="text-danger small">{{ form.facebook.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.website.id_for_label }}" class="form-label">
+                                    <i class="fas fa-globe text-info me-1"></i>Website
+                                </label>
+                                {{ form.website }}
+                                {% if form.website.errors %}
+                                    <div class="text-danger small">{{ form.website.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.linktree_url.id_for_label }}" class="form-label">
+                                    <i class="fas fa-link text-success me-1"></i>Linktree
+                                </label>
+                                {{ form.linktree_url }}
+                                <div class="form-text">URL do seu Linktree ou página de links.</div>
+                                {% if form.linktree_url.errors %}
+                                    <div class="text-danger small">{{ form.linktree_url.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            {% if empresa %}
+                                <a href="{% url 'person_list' empresa_slug=empresa.slug %}" class="btn btn-outline-secondary me-md-2">
+                                    <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                </a>
+                            {% else %}
+                                <a href="{% url 'home' %}" class="btn btn-outline-secondary me-md-2">
+                                    <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                </a>
+                            {% endif %}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Salvar Pessoa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    padding: 12px 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
+
+textarea.form-control {
+    min-height: 100px;
+}
+</style>
+
+<script>
+// Adicionar classes do Bootstrap aos campos do formulário
+document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        if (input.type !== 'file') {
+            input.classList.add('form-control');
+        } else {
+            input.classList.add('form-control');
+        }
+    });
+});
+</script>
+{% endblock %}

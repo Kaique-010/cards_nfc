@@ -1,0 +1,233 @@
+{% extends 'nfc_cards/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - {{ empresa.nome }} - {{ block.super }}{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+<style>
+
+</style>
+
+<div class="container-fluid mt-4">
+    <!-- Header da empresa -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-1">
+                                <i class="fas fa-building"></i> {{ empresa.nome }}
+                            </h2>
+                            <p class="mb-0">Painel de Controle</p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <a href="{% url 'empresa_home' empresa_slug=empresa.slug %}" class="btn btn-light">
+                                <i class="fas fa-eye"></i> Ver Página Pública
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cards de estatísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card pessoas">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ total_pessoas }}</h4>
+                            <p class="mb-0">Pessoas</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'person_list' empresa_slug=empresa.slug %}" class="text-white text-decoration-none">
+                        Ver todas <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card pets">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ total_pets }}</h4>
+                            <p class="mb-0">Pets</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-paw fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'pet_list' empresa_slug=empresa.slug %}" class="text-white text-decoration-none">
+                        Ver todos <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card cartoes">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4>{{ total_cartoes }}</h4>
+                            <p class="mb-0">Cartões NFC</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-credit-card fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span class="text-white">Cartões ativos</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card text-white bg-secondary">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h4><i class="fas fa-cog"></i></h4>
+                            <p class="mb-0">Configurações</p>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-tools fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="#" class="text-white text-decoration-none">
+                        Gerenciar <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações rápidas -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-bolt"></i> Ações Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'person_create' empresa_slug=empresa.slug %}" class="btn btn-primary w-100">
+                                <i class="fas fa-user-plus"></i> Nova Pessoa
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'pet_create' empresa_slug=empresa.slug %}" class="btn btn-success w-100">
+                                <i class="fas fa-paw"></i> Novo Pet
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'person_list' empresa_slug=empresa.slug %}" class="btn btn-info w-100">
+                                <i class="fas fa-users"></i> Ver Pessoas
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{% url 'pet_list' empresa_slug=empresa.slug %}" class="btn btn-warning w-100">
+                                <i class="fas fa-list"></i> Ver Pets
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cadastros recentes -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-users"></i> Pessoas Recentes</h5>
+                </div>
+                <div class="card-body">
+                    {% if pessoas_recentes %}
+                    <div class="list-group list-group-flush">
+                        {% for pessoa in pessoas_recentes %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ pessoa.nome }}</strong><br>
+                                <small class="text-muted">{{ pessoa.cargo|default:"Sem cargo" }}</small>
+                            </div>
+                            <a href="{% url 'person_detail' empresa_slug=empresa.slug person_slug=pessoa.slug %}"
+                                class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Nenhuma pessoa cadastrada ainda.</p>
+                    <a href="{% url 'person_create' empresa_slug=empresa.slug %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Cadastrar primeira pessoa
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-paw"></i> Pets Recentes</h5>
+                </div>
+                <div class="card-body">
+                    {% if pets_recentes %}
+                    <div class="list-group list-group-flush">
+                        {% for pet in pets_recentes %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ pet.nome }}</strong><br>
+                                <small class="text-muted">{{ pet.get_especie_display }} - Tutor: {{ pet.tutor.nome
+                                    }}</small>
+                            </div>
+                            <a href="{% url 'pet_detail' empresa_slug=empresa.slug pet_slug=pet.slug %}"
+                                class="btn btn-sm btn-outline-success">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Nenhum pet cadastrado ainda.</p>
+                    {% if total_pessoas > 0 %}
+                    <a href="{% url 'pet_create' empresa_slug=empresa.slug %}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Cadastrar primeiro pet
+                    </a>
+                    {% else %}
+                    <p class="text-muted"><small>Cadastre uma pessoa primeiro para ser tutor do pet.</small></p>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
