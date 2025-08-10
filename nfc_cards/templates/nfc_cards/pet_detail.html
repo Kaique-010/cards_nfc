@@ -31,22 +31,22 @@
                         <!-- Foto e informações básicas -->
                         <div class="col-md-4 text-center mb-4">
                             {% if pet.foto %}
-                                <img src="{{ pet.foto.url }}" alt="{{ pet.nome }}" class="pet-photo mb-3">
+                            <img src="{{ pet.foto.url }}" alt="{{ pet.nome }}" class="pet-photo mb-3">
                             {% else %}
-                                <div class="pet-placeholder mb-3">
-                                    <i class="fas fa-paw fa-4x"></i>
-                                </div>
+                            <div class="pet-placeholder mb-3">
+                                <i class="fas fa-paw fa-4x"></i>
+                            </div>
                             {% endif %}
-                            
+
                             <h2 class="mb-2">{{ pet.nome }}</h2>
-                            
+
                             <div class="pet-badges mb-3">
                                 <span class="badge bg-primary">{{ pet.get_especie_display }}</span>
                                 {% if pet.porte %}
                                 <span class="badge bg-secondary">{{ pet.get_porte_display }}</span>
                                 {% endif %}
                             </div>
-                            
+
                             <p class="text-muted mb-1">
                                 <i class="fas fa-building me-2"></i>{{ empresa.nome }}
                             </p>
@@ -57,31 +57,31 @@
                             <h4 class="mb-3">
                                 <i class="fas fa-info-circle me-2"></i>Informações Básicas
                             </h4>
-                            
+
                             <div class="row">
                                 {% if pet.raca %}
                                 <div class="col-sm-6 mb-3">
-                                    <div class="info-item">
-                                        <i class="fas fa-dna text-primary me-2"></i>
+                                    <div class="info-item text-success">
+                                        <i class="fas fa-dna text-success me-2"></i>
                                         <strong>Raça:</strong><br>
                                         {{ pet.raca }}
                                     </div>
                                 </div>
                                 {% endif %}
-                                
+
                                 {% if pet.cor %}
                                 <div class="col-sm-6 mb-3">
-                                    <div class="info-item">
+                                    <div class="info-item text-warning">
                                         <i class="fas fa-palette text-warning me-2"></i>
                                         <strong>Cor:</strong><br>
                                         {{ pet.cor }}
                                     </div>
                                 </div>
                                 {% endif %}
-                                
+
                                 {% if pet.data_nascimento %}
                                 <div class="col-sm-6 mb-3">
-                                    <div class="info-item">
+                                    <div class="info-item text-success  ">
                                         <i class="fas fa-birthday-cake text-success me-2"></i>
                                         <strong>Data de Nascimento:</strong><br>
                                         {{ pet.data_nascimento|date:"d/m/Y" }}
@@ -108,11 +108,12 @@
                                 <div class="card-body">
                                     <div class="d-flex align-items-center">
                                         {% if pet.tutor.foto %}
-                                            <img src="{{ pet.tutor.foto.url }}" alt="{{ pet.tutor.nome }}" class="tutor-photo me-3">
+                                        <img src="{{ pet.tutor.foto.url }}" alt="{{ pet.tutor.nome }}"
+                                            class="tutor-photo me-3">
                                         {% else %}
-                                            <div class="tutor-placeholder me-3">
-                                                <i class="fas fa-user"></i>
-                                            </div>
+                                        <div class="tutor-placeholder me-3">
+                                            <i class="fas fa-user"></i>
+                                        </div>
                                         {% endif %}
                                         <div class="flex-grow-1">
                                             <h5 class="mb-1">{{ pet.tutor.nome }}</h5>
@@ -126,7 +127,8 @@
                                                 {% endif %}
                                             </p>
                                         </div>
-                                        <a href="{% url 'person_detail' empresa_slug=empresa.slug person_slug=pet.tutor.slug %}" class="btn btn-outline-primary">
+                                        <a href="{% url 'person_detail' empresa_slug=empresa.slug person_slug=pet.tutor.slug %}"
+                                            class="btn btn-outline-primary">
                                             Ver Perfil
                                         </a>
                                     </div>
@@ -143,7 +145,7 @@
                             <h4 class="mb-3">
                                 <i class="fas fa-stethoscope me-2"></i>Informações Médicas
                             </h4>
-                            
+
                             {% if pet.veterinario or pet.telefone_veterinario %}
                             <div class="card medical-card mb-3">
                                 <div class="card-body">
@@ -155,14 +157,15 @@
                                     {% endif %}
                                     {% if pet.telefone_veterinario %}
                                     <p class="mb-0">
-                                        <strong>Telefone:</strong> 
-                                        <a href="tel:{{ pet.telefone_veterinario }}" class="text-decoration-none">{{ pet.telefone_veterinario }}</a>
+                                        <strong>Telefone:</strong>
+                                        <a href="tel:{{ pet.telefone_veterinario }}" class="text-decoration-none">{{
+                                            pet.telefone_veterinario }}</a>
                                     </p>
                                     {% endif %}
                                 </div>
                             </div>
                             {% endif %}
-                            
+
                             <div class="row">
                                 {% if pet.medicamentos %}
                                 <div class="col-md-6 mb-3">
@@ -176,7 +179,7 @@
                                     </div>
                                 </div>
                                 {% endif %}
-                                
+
                                 {% if pet.alergias %}
                                 <div class="col-md-6 mb-3">
                                     <div class="card medical-card">
@@ -222,7 +225,8 @@
                                         <div class="card-body text-center">
                                             <i class="fas fa-credit-card fa-2x text-primary mb-2"></i>
                                             <h6>Cartão #{{ cartao.codigo_nfc }}</h6>
-                                            <small class="text-muted">Criado em {{ cartao.criado_em|date:"d/m/Y" }}</small>
+                                            <small class="text-muted">Criado em {{ cartao.criado_em|date:"d/m/Y"
+                                                }}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -238,84 +242,88 @@
 </div>
 
 <style>
-.pet-detail-card {
-    border: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
-}
+    .pet-detail-card {
+        border: none;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+    }
 
-.pet-photo {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 4px solid var(--primary-color);
-}
+    .pet-photo {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid var(--primary-color);
+    }
 
-.pet-placeholder {
-    width: 150px;
-    height: 150px;
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    margin: 0 auto;
-}
+    .pet-placeholder {
+        width: 150px;
+        height: 150px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin: 0 auto;
+    }
 
-.pet-badges .badge {
-    margin: 0 5px;
-    font-size: 0.9rem;
-}
+    .pet-badges .badge {
+        margin: 0 5px;
+        font-size: 0.9rem;
+    }
 
-.info-item {
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 10px;
-    height: 100%;
-}
+    .info-item {
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        height: 100%;
+    }
 
-.tutor-card, .medical-card, .nfc-card {
-    border: none;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    border-radius: 15px;
-    transition: all 0.3s ease;
-}
+    .tutor-card,
+    .medical-card,
+    .nfc-card {
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    }
 
-.tutor-card:hover, .medical-card:hover, .nfc-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
+    .tutor-card:hover,
+    .medical-card:hover,
+    .nfc-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
 
-.tutor-photo {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 50%;
-}
+    .tutor-photo {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
 
-.tutor-placeholder {
-    width: 60px;
-    height: 60px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-}
+    .tutor-placeholder {
+        width: 60px;
+        height: 60px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
 
-.observacoes-box {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 15px;
-    border-left: 4px solid var(--primary-color);
-}
+    .observacoes-box {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        border-left: 4px solid var(--primary-color);
+    }
 
-.medical-card .card-title {
-    color: var(--primary-color);
-    font-weight: 600;
-}
+    .medical-card .card-title {
+        color: var(--primary-color);
+        font-weight: 600;
+    }
 </style>
 {% endblock %}

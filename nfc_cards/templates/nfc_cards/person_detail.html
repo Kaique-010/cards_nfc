@@ -828,7 +828,7 @@ function showQRCode(code) {
     const modal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
     const content = document.getElementById('qrCodeContent');
     
-    // Gerar URL do QR Code
+    // Gerar URL do QR Code (rota canônica de redirecionamento por NFC)
     const url = `${window.location.origin}/{{ empresa.slug }}/nfc/${code}/`;
     
     content.innerHTML = `

@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    container_name: cards_nfc_web
+    command: gunicorn card_nfc_project.wsgi:application --bind 0.0.0.0:8000 --workers 3
+    ports:
+      - "8001:8000"
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=card_nfc_project.settings
+    volumes:
+      - .:/app
+      - media_volume:/app/media
+      - static_volume:/app/staticfiles
+    depends_on:
+      - migrate
+
+  migrate:
+    build: .
+    container_name: cards_nfc_migrate
+    command: python manage.py migrate --noinput
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=card_nfc_project.settings
+    volumes:
+      - .:/app
+      - media_volume:/app/media
+      - static_volume:/app/staticfiles
+
+volumes:
+  media_volume:
+  static_volume:
+
+

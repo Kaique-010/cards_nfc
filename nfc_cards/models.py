@@ -7,8 +7,10 @@ from django.dispatch import receiver
 import uuid
 import qrcode
 from io import BytesIO
+from django.conf import settings
 from django.core.files import File
 from PIL import Image
+from django.core.exceptions import ValidationError
 
 class UserProfile(models.Model):
     """Perfil do usuário conectado a uma empresa"""
@@ -265,7 +267,19 @@ class NFCCard(models.Model):
             return f"Cartão NFC - {self.pet.nome} ({self.empresa.nome})"
         return f"Cartão NFC - {self.codigo_nfc} ({self.empresa.nome})"
     
+    def clean(self):
+        associado_a_pessoa = bool(self.pessoa)
+        associado_a_pet = bool(self.pet)
+        if associado_a_pessoa == associado_a_pet:
+            # Ambos vazios ou ambos preenchidos não são válidos
+            raise ValidationError('O cartão NFC deve estar associado a exatamente um: pessoa OU pet.')
+        # Ajusta tipo conforme associação
+        self.tipo = 'pessoa' if associado_a_pessoa else 'pet'
+    
     def save(self, *args, **kwargs):
+        # Normalizar código (sem espaços, maiúsculo)
+        if self.codigo_nfc:
+            self.codigo_nfc = str(self.codigo_nfc).strip().upper()
         # Definir empresa baseada na pessoa ou pet
         if self.pessoa:
             self.empresa = self.pessoa.empresa
@@ -278,12 +292,20 @@ class NFCCard(models.Model):
         super().save(*args, **kwargs)
     
     def generate_qr_code(self):
-        if self.pessoa:
-            url = f"https://seudominio.com/{self.empresa.slug}/pessoa/{self.pessoa.slug}/"
-        elif self.pet:
-            url = f"https://seudominio.com/{self.empresa.slug}/pet/{self.pet.slug}/"
-        else:
+        """Gera QR apontando para a rota canônica de redirecionamento por código NFC.
+        Mantém o comportamento consistente entre QR e NFC físico.
+        """
+        if not self.codigo_nfc:
             return
+
+        # Preferir URL canônica por empresa: /<empresa_slug>/nfc/<codigo>/
+        if self.empresa and self.empresa.slug:
+            relative_url = f"/{self.empresa.slug}/nfc/{self.codigo_nfc}/"
+        else:
+            relative_url = f"/nfc/{self.codigo_nfc}/"
+
+        base_url = getattr(settings, 'SITE_URL', 'http://localhost:8000')
+        url = f"{base_url.rstrip('/')}{relative_url}"
         
         qr = qrcode.QRCode(version=1, box_size=10, border=5)
         qr.add_data(url)
